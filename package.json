@@ -1,10 +1,10 @@
 {
   "name": "de.youre.forunity",
-  "version": "0.0.2",
+  "version": "0.1.0",
+  "license": "MIT"
   "displayName": "YOURE for Unity",
   "description": "The YOURE Sign In Component Unity Package provides a simple and convenient way for Unity developers to integrate YOURE sign-in functionality into their applications. With this package, users can quickly and easily sign in to YOURE and access their accounts without leaving the Unity environment.",
   "unity": "2021.3",
-  "unityRelease": "0b1",
   "documentationUrl": "https://github.com/Youre-Group/Youre-for-Unity",
   "licensesUrl": "https://github.com/Youre-Group/Youre-for-Unity",
   "author": {
