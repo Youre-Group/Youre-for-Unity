@@ -77,7 +77,7 @@ public class Authentication
                 AuthToken refreshedAuthToken = JsonConvert.DeserializeObject<AuthToken>(tokenData);
                 tcs.SetResult(refreshedAuthToken);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Error while parsing token data.
                 AuthError error = new(103, request.error);
@@ -236,7 +236,7 @@ public class Authentication
                 var user = JsonConvert.DeserializeObject<YoureUser>(request.downloadHandler.text);
                 tcs.SetResult(user);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 AuthError error = JsonConvert.DeserializeObject<AuthError>(request.downloadHandler.text);
                 if (error.Error == "invalid_token")
@@ -338,7 +338,7 @@ public class Authentication
                 Youre.LogDebug("Access Token set received: "+tokenData);
                 tcs.SetResult(authToken);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Youre.LogDebug("Error while parsing token data: "+request.downloadHandler.text);
             }
