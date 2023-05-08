@@ -2,6 +2,17 @@
 
 > The YOURE Sign In Component Unity Package provides a simple and convenient way for Unity developers to integrate YOURE sign-in functionality into their applications. With this package, users can quickly and easily sign in to YOURE and access their accounts without leaving the Unity environment.
 
+## Installation via Unity Package Manager
+
+Installing a Unity Package via Git URL
+You can install a Unity package via Git URL using the Package Manager. Here are the steps to follow:
+1. Open your Unity project.
+2. Open the Package Manager window by selecting Window > Package Manager from the Unity Editor menu.
+3. Click the "+" button at the top left corner of the Package Manager window and select "Add package from git URL".
+4. In the text field that appears, enter the Git URL: https://github.com/Youre-Group/Youre-for-Unity.git 
+5. Click the Add button to begin the installation process.
+6. Once the installation is complete, the package will be available in your project and you can start using it.
+
 ## Usage
 
 ```c#
