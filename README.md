@@ -13,6 +13,13 @@ You can install a Unity package via Git URL using the Package Manager. Here are 
 5. Click the Add button to begin the installation process.
 6. Once the installation is complete, the package will be available in your project and you can start using it.
 
+
+### Android Manifest
+If you experience low performance within the signup, please make sure to activate hardware acceleration (`android:hardwareAccelerated="true"`) for the main activity (AndroidManifest.xml in `unityLibrary` module)
+
+> More information regarding hardware acceleration in unity: https://forum.unity.com/threads/android-hardwareaccelerated-is-forced-false-in-all-activities.532786/
+
+
 ## Usage
 
 ```c#
