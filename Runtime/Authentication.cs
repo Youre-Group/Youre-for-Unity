@@ -41,7 +41,7 @@ public class Authentication
     /// <summary>
     /// Deletes previous cached access token data
     /// </summary>
-    public void ClearLoginCache()
+    public void ClearSignInCache()
     {
         FlushTokenSetCache();
     }
@@ -261,7 +261,7 @@ public class Authentication
     /// <summary>
     /// Force destroy Login View
     /// </summary>
-    public void ForceDestroyLoginView()
+    public void DestroySignInOverlay()
     {
         DestroyWebView();
     }
