@@ -12,4 +12,7 @@
     "email": "mobile@gamescoin.io",
     "url": "https://www.gamescoin.io"
   }
+  "dependencies": {
+    "Newtonsoft.Json": "https://github.cds.internal.unity3d.com/unity/com.unity.nuget.newtonsoft-json.git"
+  }
 }
