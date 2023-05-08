@@ -1,0 +1,15 @@
+{
+  "name": "de.youre.forunity",
+  "version": "0.0.1",
+  "displayName": "YOURE for Unity",
+  "description": "Runtime Code and Examples for connecting to YOURE Games Services",
+  "unity": "2021.3",
+  "unityRelease": "0b1",
+  "documentationUrl": "https://github.com/Youre-Group/Youre-for-Unity",
+  "licensesUrl": "https://github.com/Youre-Group/Youre-for-Unity",
+  "author": {
+    "name": "YOURE Games",
+    "email": "mobile@gamescoin.io",
+    "url": "https://www.gamescoin.io"
+  }
+}
