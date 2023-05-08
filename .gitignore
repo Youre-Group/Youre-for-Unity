@@ -10,6 +10,9 @@
 */.vs/
 */.idea/
 
+**/.idea/workspace.xml 
+**/.idea/tasks.xml
+
 LICENCE.meta
 CHANGELOG.md.meta
 package.json.meta
