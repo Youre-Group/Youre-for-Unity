@@ -43,17 +43,19 @@ namespace YourePlugin
         private static Youre _instance;
         private static Authentication _auth;
 
-        private Youre(string clientId, string endpointUrl)
+        private Youre(string clientId, string endpointUrl, string redirectUrl)
         {
-            _auth = new Authentication(clientId, endpointUrl);
+            _auth = new Authentication(clientId, endpointUrl, redirectUrl);
         }
     
         /// <summary>
         /// Init has to be called 'once' before any other actions
         /// </summary>
         /// <param name="clientId">Please request this id from technical support</param>
+        /// <param name="endpointUrl">Please request this id from technical support</param>
+        /// <param name="redirectUrl">Please request this id from technical support</param>
         /// <returns></returns>
-        public static Youre Init(string clientId, string endpointUrl)
+        public static Youre Init(string clientId, string endpointUrl, string redirectUrl)
         {
             if (_instance != null)
             {
@@ -61,7 +63,7 @@ namespace YourePlugin
                 return _instance;
             }
         
-            _instance = new Youre(clientId, endpointUrl);
+            _instance = new Youre(clientId, endpointUrl, redirectUrl);
             return _instance;
         }
     

@@ -14,6 +14,7 @@ namespace YourePlugin.WebView
             var webViewObject = (new GameObject("YOURESignInWebView")).AddComponent<WebViewObject>();
             UnityEngine.Object.DontDestroyOnLoad(webViewObject.gameObject);
 
+           
             webViewObject.Init(
                 cb: (msg) =>
                 {
@@ -140,7 +141,6 @@ namespace YourePlugin.WebView
         {
             if (_webView != null)
                 UnityEngine.Object.Destroy(_webView.gameObject);
-
             _webView = null;
         }
 

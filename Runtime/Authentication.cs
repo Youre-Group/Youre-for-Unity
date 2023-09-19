@@ -24,24 +24,28 @@ namespace YourePlugin
         public event Action SignInShown;
         public event Action SignInRemoved;
         //public event Action<AuthError> SignInFailed;
+        private readonly string _redirectUrl;
         private readonly string _endpoint;
         private readonly string _clientId;
         private readonly WebViewHandler _webviewHandler;
 
-        const string RedirectUrl = "https://youre.games";
-
-        public Authentication(string clientId, string endpointUrl)
+        public Authentication(string clientId, string endpointUrl, string redirectUrl)
         {
             Pkce.Init();
             _clientId = clientId;
             _endpoint = endpointUrl.TrimEnd('/');
-
+           
+            if (!redirectUrl.StartsWith("https://"))
+                redirectUrl = "https://" + redirectUrl;
+            
+            _redirectUrl = redirectUrl.TrimEnd('/');
+            
 #if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             _webviewHandler = new MobileWebViewHandler();
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             _webviewHandler = new WinWebViewHandler();
 #endif
-
+            
         }
 
         /// <summary>
@@ -58,7 +62,7 @@ namespace YourePlugin
         public void Logout()
         {
             FlushTokenSetCache();
-            string url = $"{_endpoint}/v2/logout?returnTo={UnityWebRequest.EscapeURL(RedirectUrl)}";
+            string url = $"{_endpoint}/v2/logout?returnTo={UnityWebRequest.EscapeURL(_redirectUrl)}";
             UnityWebRequest request = UnityWebRequest.Get(url);
             request.SendWebRequest();
         }
@@ -151,7 +155,7 @@ namespace YourePlugin
         {
             string url = $"{_endpoint}/authorize?";
             url += $"client_id={_clientId}";
-            url += $"&redirect_uri={UnityWebRequest.EscapeURL(RedirectUrl)}";
+            url += $"&redirect_uri={UnityWebRequest.EscapeURL(_redirectUrl)}";
             url += "&response_type=code";
             url += "&token_endpoint_auth_method=none";
             url += $"&scope={UnityWebRequest.EscapeURL("openid email profile")}";
@@ -208,8 +212,8 @@ namespace YourePlugin
 
             _webviewHandler.CreateWebView(authOptions.SignInViewMargins, authOptions.SignInViewBackgroundTransparent);
             _webviewHandler.OnAuthCodeReceived += (string authCode) => {
-                SignInRemoved?.Invoke();
-                tcs.SetResult(authCode);
+             //   SignInRemoved?.Invoke();
+               // tcs.SetResult(authCode);
             
             };
             /*_webviewHandler.OnError += (string errorMsg) => {
@@ -240,7 +244,7 @@ namespace YourePlugin
                 { "client_id", _clientId },
                 { "code_verifier", Pkce.CodeVerifier },
                 { "code", authCode },
-                { "redirect_uri", RedirectUrl },
+                { "redirect_uri", _redirectUrl },
                 { "token_endpoint_auth_method", "none" }
             };
             Debug.Log(url);
