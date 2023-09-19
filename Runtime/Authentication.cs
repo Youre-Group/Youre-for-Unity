@@ -212,9 +212,8 @@ namespace YourePlugin
 
             _webviewHandler.CreateWebView(authOptions.SignInViewMargins, authOptions.SignInViewBackgroundTransparent);
             _webviewHandler.OnAuthCodeReceived += (string authCode) => {
-             //   SignInRemoved?.Invoke();
-               // tcs.SetResult(authCode);
-            
+                 SignInRemoved?.Invoke();
+                 tcs.SetResult(authCode);
             };
             /*_webviewHandler.OnError += (string errorMsg) => {
             AuthError error = new(104, "Error while loading login url: " + errorMsg);
