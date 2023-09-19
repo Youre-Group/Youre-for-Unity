@@ -51,7 +51,17 @@ namespace YourePlugin
         {
             FlushTokenSetCache();
         }
-
+        
+        /// <summary>
+        /// Requests global logout from currently logged in YOURE account
+        /// </summary>
+        public void Logout()
+        {
+            FlushTokenSetCache();
+            string url = $"{_endpoint}/v2/logout?returnTo={UnityWebRequest.EscapeURL(RedirectUrl)}";
+            UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+        }
 
         /// <summary>
         /// Returns AuthToken from cache or null if not found in cache
@@ -85,7 +95,7 @@ namespace YourePlugin
             AuthToken cachedAuthToken = GetAuthToken();
             if (cachedAuthToken == null)
             {
-                string loginUrl = await RequestLoginAsync();
+                string loginUrl = GetLoginUrl();
                 string authCode = await RequestAuthCodeAsync(loginUrl, authOptions);
                 AuthToken newAuthToken = await RequestAccessTokenAsync(authCode);
                 cachedAuthToken = CacheTokenSet(newAuthToken);
@@ -134,15 +144,11 @@ namespace YourePlugin
         }
 
         /// <summary>
-        /// Will try to retrieve redirect url for 'YOURE login'
+        /// Create login url for 'YOURE login'
         /// </summary>
         /// <returns>Redirect url used to show 'YOURE login'</returns>
-        private async Task<string> RequestLoginAsync()
+        private string GetLoginUrl()
         {
-
-
-            var tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-
             string url = $"{_endpoint}/authorize?";
             url += $"client_id={_clientId}";
             url += $"&redirect_uri={UnityWebRequest.EscapeURL(RedirectUrl)}";
@@ -151,10 +157,7 @@ namespace YourePlugin
             url += $"&scope={UnityWebRequest.EscapeURL("openid email profile")}";
             url += $"&code_challenge={Pkce.CodeChallenge}";
             url += "&code_challenge_method=S256";
-            tcs.SetResult(url);
-       
-            await tcs.Task;
-            return tcs.Task.Result;
+            return url;
         }
 
         /// <summary>
