@@ -18,6 +18,8 @@ You can install a Unity package via Git URL using the Package Manager. Here are 
 5. Click the Add button to begin the installation process.
 6. Once the installation is complete, the package will be available in your project and you can start using it.
 
+### iOS
+To compile on iOS you will need to add **WebKit.framework** to the **UnityFramework Target** in XCODE manually.
 
 ### Android Manifest
 If you experience low performance within the signup, please make sure to activate hardware acceleration (`android:hardwareAccelerated="true"`) for the main activity (AndroidManifest.xml in `unityLibrary` module)
@@ -32,7 +34,8 @@ public class SimpleAuthenticate : MonoBehaviour
 {
     private void Start()
     {
-        Youre.Init("ENTER YOUR CLIENT ID");
+        // YOURE Games will provide you with client id and endpoint url
+        Youre.Init("ENTER YOUR CLIENT ID","ENTER YOUR ENDPOINT URL");
     
         Youre.Auth.SignInShown += () =>
         {
@@ -48,10 +51,6 @@ public class SimpleAuthenticate : MonoBehaviour
         {
             Debug.Log("Received YOURE User Id from callback: "+user.Id);
         };
-        Youre.Auth.SignInFailed += error =>
-        {
-            Debug.Log(error);
-        };
         
         StartAuthenticationAsync();
     }
@@ -62,25 +61,19 @@ public class SimpleAuthenticate : MonoBehaviour
         {
             // SignInViewBackgroundTransparent = true,
             // SignInViewMargins = new Authentication.AuthOptions.Margins(50,50,50,50),
-            // CustomEndpointUrl = "https://sso.prepro.youre.id"
         };
         
         await Youre.Auth.AuthenticateAsync(options);
     }
 }
 ```
-## Error Codes
-
-| Error Code | Description                      |
-|------------|----------------------------------|
-| 101        | Error while requesting login url |
-| 102        | Error while requesting login url |
-| 103        | Error while parsing token data   |
-| 104        | Error while loading login url    |
-| 105        | User info response error         |
-
 
 ## Misc
+
+### Logout
+```c#
+Youre.Auth.Logout();
+```
 
 ### Force SignIn Overlay to close
 ```c#
