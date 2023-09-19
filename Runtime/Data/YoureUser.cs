@@ -9,13 +9,17 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Data
+namespace YourePlugin.Data
 {
     [Serializable]
     public class YoureUser
     {
-        [JsonProperty("sub"),JsonRequired]
-        public string Id { get; set; }
+
+        [JsonRequired]
+        private string Sub { get; set; }
+
+        public string Id => Sub.Split("|")[1];
+
         [JsonProperty("email")]
         public string Email { get; set; }
         [JsonProperty("username")]

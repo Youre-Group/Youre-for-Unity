@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Utils
+namespace YourePlugin.Utils
 {
     public static class Pkce
     {

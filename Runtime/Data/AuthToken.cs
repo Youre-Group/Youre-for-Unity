@@ -9,7 +9,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Data
+namespace YourePlugin.Data
 {
     [Serializable]
     public class AuthToken

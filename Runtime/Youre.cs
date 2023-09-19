@@ -8,65 +8,68 @@
 
 using UnityEngine;
 
-public sealed class Youre
+namespace YourePlugin
 {
-    /// <summary>
-    /// If TRUE, debug output is enabled
-    /// </summary>
-    public static bool DebugMode { get; set; }
+    public sealed class Youre
+    {
+        /// <summary>
+        /// If TRUE, debug output is enabled
+        /// </summary>
+        public static bool DebugMode { get; set; }
 
-    /// <summary>
-    /// YOURE authentication module; used to request YoureID;
-    /// </summary>
-    public static Authentication Auth
-    {
-        get
+        /// <summary>
+        /// YOURE authentication module; used to request YoureID;
+        /// </summary>
+        public static Authentication Auth
         {
-            if (_auth == null)
-                Debug.LogError("Please call Youre.Init() before using any service.");
-            return _auth;
+            get
+            {
+                if (_auth == null)
+                    Debug.LogError("Please call Youre.Init() before using any service.");
+                return _auth;
+            }
         }
-    }
     
-    public static Youre Instance
-    {
-        get
+        public static Youre Instance
         {
-            if (_instance == null)
-                Debug.LogError("Please call Youre.Init() before using any service.");
-            return _instance;
+            get
+            {
+                if (_instance == null)
+                    Debug.LogError("Please call Youre.Init() before using any service.");
+                return _instance;
+            }
         }
-    }
     
-    private static Youre _instance;
-    private static Authentication _auth;
+        private static Youre _instance;
+        private static Authentication _auth;
 
-    private Youre(string clientId)
-    {
-        _auth = new Authentication(clientId);
-    }
-    
-    /// <summary>
-    /// Init has to be called 'once' before any other actions
-    /// </summary>
-    /// <param name="clientId">Please request this id from technical support</param>
-    /// <returns></returns>
-    public static Youre Init(string clientId)
-    {
-        if (_instance != null)
+        private Youre(string clientId, string endpointUrl)
         {
-            LogDebug("Already initiated");
-            return _instance;
+            _auth = new Authentication(clientId, endpointUrl);
         }
+    
+        /// <summary>
+        /// Init has to be called 'once' before any other actions
+        /// </summary>
+        /// <param name="clientId">Please request this id from technical support</param>
+        /// <returns></returns>
+        public static Youre Init(string clientId, string endpointUrl)
+        {
+            if (_instance != null)
+            {
+                LogDebug("Already initiated");
+                return _instance;
+            }
         
-        _instance = new Youre(clientId);
-        return _instance;
-    }
+            _instance = new Youre(clientId, endpointUrl);
+            return _instance;
+        }
     
-    internal static void LogDebug(string message)
-    {
-        if (DebugMode)
-            Debug.Log($"[YOURE] {message}");
-    }
+        internal static void LogDebug(string message)
+        {
+            if (DebugMode)
+                Debug.Log($"[YOURE] {message}");
+        }
 
+    }
 }
