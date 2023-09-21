@@ -27,6 +27,8 @@ If you experience low performance within the signup, please make sure to activat
 > More information regarding hardware acceleration in unity: https://forum.unity.com/threads/android-hardwareaccelerated-is-forced-false-in-all-activities.532786/
 
 
+
+
 ## Usage
 
 ```c#
@@ -34,8 +36,8 @@ public class SimpleAuthenticate : MonoBehaviour
 {
     private void Start()
     {
-        // YOURE Games will provide you with client id and endpoint url
-        Youre.Init("ENTER YOUR CLIENT ID","ENTER YOUR ENDPOINT URL");
+        // YOURE Games will provide you with client id, endpoint url, redirect url
+        Youre.Init("ENTER YOUR CLIENT ID","https://ENTER YOUR ENDPOINT URL","https://ENTER_YOUR_REDIRECT_URL");
     
         Youre.Auth.SignInShown += () =>
         {
@@ -50,6 +52,7 @@ public class SimpleAuthenticate : MonoBehaviour
         Youre.Auth.SignInSucceeded += user =>
         {
             Debug.Log("Received YOURE User Id from callback: "+user.Id);
+            Debug.Log("Received YOURE Auth0 access token from callback: "+user.AccessToken);
         };
         
         StartAuthenticationAsync();
@@ -60,13 +63,41 @@ public class SimpleAuthenticate : MonoBehaviour
         var options = new Authentication.AuthOptions
         {
             // SignInViewBackgroundTransparent = true,
-            // SignInViewMargins = new Authentication.AuthOptions.Margins(50,50,50,50),
+            SignInViewMargins = new Authentication.AuthOptions.Margins(0,0,0,0),
         };
         
         await Youre.Auth.AuthenticateAsync(options);
     }
 }
 ```
+
+## Example Server Validation (php)
+```php
+$endpoint = 'YOUR_ENDPOINT_URL'; // Replace with your actual endpoint URL
+$authToken =  'YOUR_ACCESS_TOKEN'; // Replace with actual access token generated from client
+
+
+$url = $endpoint . '/oauth/userInfo';
+
+$ch = curl_init($url);
+
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer ' . $authToken
+]);
+
+$response = curl_exec($ch);
+
+if (curl_errno($ch)) {
+    echo 'Error: ' . curl_error($ch);
+} else {
+    // Handle the response here
+    echo $response;
+}
+
+curl_close($ch);
+```
+
 
 ## Misc
 

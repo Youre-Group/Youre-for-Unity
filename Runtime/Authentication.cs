@@ -116,6 +116,7 @@ namespace YourePlugin
             
             }
 
+            
             SignInSucceeded?.Invoke(user);
         }
     
@@ -181,6 +182,7 @@ namespace YourePlugin
                 try
                 {
                     var user = JsonConvert.DeserializeObject<YoureUser>(request.downloadHandler.text);
+                    user.AccessToken = authToken.AccessToken;
                     tcs.SetResult(user);
                 }
                 catch (Exception e)
