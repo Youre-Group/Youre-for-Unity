@@ -4,7 +4,7 @@
 
 
 ### Supported Platforms: 
-Android, iOS
+Android, iOS, HTML5(WebGL)
 
 
 ## Installation via Unity Package Manager
