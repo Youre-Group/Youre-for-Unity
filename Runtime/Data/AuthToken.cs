@@ -15,13 +15,13 @@ namespace YourePlugin.Data
     public class AuthToken
     {
         [JsonProperty("id_token"), JsonRequired]
-        public string IdToken { get; set; }
+        public string IdToken;
         
         [JsonProperty("access_token"), JsonRequired]
-        public string AccessToken { get; set; }
-        
-        [JsonProperty("refresh_token")]
-        public string RefreshToken { get; set; }
+
+        public string AccessToken;
+
+        [JsonProperty("refresh_token")] public string RefreshToken;
 
         public AuthToken(string idToken, string accessToken, string refreshToken)
         {

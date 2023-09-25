@@ -14,17 +14,18 @@ namespace YourePlugin.Data
     [Serializable]
     public class YoureUser
     {
-
-        [JsonRequired]
-        private string Sub { get; set; }
+        [JsonProperty("sub"), JsonRequired]
+        public string Sub;
         public string AccessToken { get; set; }
         public string Id => Sub.Split("|")[1];
-        
-        [JsonProperty("email")]
-        public string Email { get; set; }
-        [JsonProperty("username")]
-        public string UserName { get; set; }
-        [JsonProperty("email_verified")]
-        public string EmailVerified { get; set; }
+
+        [JsonProperty("email")] 
+        public string Email;
+
+        [JsonProperty("username")] 
+        public string UserName;
+
+        [JsonProperty("email_verified")] 
+        public string EmailVerified;
     }
 }

@@ -15,11 +15,20 @@ using UnityEngine.Networking;
 using YourePlugin.Data;
 using YourePlugin.Utils;
 using YourePlugin.WebView;
+using System.Runtime.InteropServices;
+
 
 namespace YourePlugin
 {
     public class Authentication
     {
+
+		[DllImport("__Internal")]
+    	private static extern void GoToUrl(string url);
+
+		[DllImport("__Internal")]
+		private static extern string GetCurrentUrl();
+
         public event Action<YoureUser> SignInSucceeded;
         public event Action SignInShown;
         public event Action SignInRemoved;
@@ -40,10 +49,11 @@ namespace YourePlugin
             
             _redirectUrl = redirectUrl.TrimEnd('/');
             
-#if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            _webviewHandler = new MobileWebViewHandler();
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             _webviewHandler = new WinWebViewHandler();
+#else 
+            _webviewHandler = new MobileWebViewHandler();
 #endif
             
         }
@@ -93,18 +103,40 @@ namespace YourePlugin
         /// <param name="authOptions"></param>
         public async Task AuthenticateAsync(AuthOptions authOptions = new())
         {
-      
-        
-        
             AuthToken cachedAuthToken = GetAuthToken();
             if (cachedAuthToken == null)
             {
                 string loginUrl = GetLoginUrl();
-                string authCode = await RequestAuthCodeAsync(loginUrl, authOptions);
-                AuthToken newAuthToken = await RequestAccessTokenAsync(authCode);
-                cachedAuthToken = CacheTokenSet(newAuthToken);
+                string authCode = string.Empty;
+#if UNITY_WEBGL
+				var u = GetCurrentUrl();
+				if(u.Contains("code="))
+				{
+					Pkce.CodeVerifier = PlayerPrefs.GetString("YOURE_last_code_verifier");
+					authCode = u.Split("code=")[1].Split("&")[0];
+				} else {
+					// Save current code verifier used to create login url for later use
+					PlayerPrefs.SetString("YOURE_last_code_verifier", Pkce.CodeVerifier);
+					GoToUrl(loginUrl);
+					return;
+				}
+#else
+                authCode = await RequestAuthCodeAsync(loginUrl, authOptions);
+#endif
+                if (!string.IsNullOrEmpty(authCode))
+                {
+                    AuthToken newAuthToken = await RequestAccessTokenAsync(authCode);
+                    cachedAuthToken = CacheTokenSet(newAuthToken);
+                }
+                else
+                {
+					FlushTokenSetCache();
+					await Task.Delay(2000);
+					await AuthenticateAsync(authOptions);
+					return;
+                }
             }
-     
+    		
             // Try to get UserInfo with current access token
             YoureUser user = await GetUserInfo(cachedAuthToken);
             if (user == null) // we assume that token is expired here
@@ -113,10 +145,8 @@ namespace YourePlugin
                 FlushTokenSetCache();
                 await Task.Delay(2000);
                 await AuthenticateAsync(authOptions);
-            
+				return;
             }
-
-            
             SignInSucceeded?.Invoke(user);
         }
     
@@ -171,6 +201,8 @@ namespace YourePlugin
         /// <returns>YoureUser</returns>
         private Task<YoureUser> GetUserInfo(AuthToken authToken)
         {
+
+
             TaskCompletionSource<YoureUser> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
             string url = $"{_endpoint}/oauth/userInfo";
@@ -181,13 +213,12 @@ namespace YourePlugin
             {
                 try
                 {
-                    var user = JsonConvert.DeserializeObject<YoureUser>(request.downloadHandler.text);
+                	var user = JsonConvert.DeserializeObject<YoureUser>(request.downloadHandler.text);
                     user.AccessToken = authToken.AccessToken;
                     tcs.SetResult(user);
                 }
                 catch (Exception e)
                 {
-
                     Youre.LogDebug($"Error while parsing userInfo response: {e.Message}");
                     tcs.SetResult(null);
                 }
@@ -258,7 +289,7 @@ namespace YourePlugin
                 {
                     string tokenData = request.downloadHandler.text;
                     AuthToken authToken = JsonConvert.DeserializeObject<AuthToken>(tokenData);
-                    Youre.LogDebug("Access Token set received: "+tokenData);
+                    Youre.LogDebug("Access Token set received: "+authToken.AccessToken);
                     tcs.SetResult(authToken);
                 }
                 catch (Exception)
