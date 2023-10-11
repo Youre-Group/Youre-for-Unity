@@ -34,7 +34,7 @@ namespace YourePlugin.WebView
                     Youre.LogDebug("started: "+msg);
                     if (msg.Contains("?code="))
                     {
-                        string authCode = msg.Split("?code=")[1];
+                        string authCode = msg.Split(new string[] { "?code=" }, StringSplitOptions.None)[1];
                         Youre.LogDebug($"AuthorisationCode received: {authCode}");
                         OnAuthCodeReceived?.Invoke(authCode);
                         DestroyWebView();

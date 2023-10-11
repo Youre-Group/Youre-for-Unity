@@ -113,7 +113,7 @@ namespace YourePlugin
 				if(u.Contains("code="))
 				{
 					Pkce.CodeVerifier = PlayerPrefs.GetString("YOURE_last_code_verifier");
-					authCode = u.Split("code=")[1].Split("&")[0];
+                    authCode = u.Split(new string[] { "code=" }, StringSplitOptions.None)[1].Split('&')[0];
 				} else {
 					// Save current code verifier used to create login url for later use
 					PlayerPrefs.SetString("YOURE_last_code_verifier", Pkce.CodeVerifier);
