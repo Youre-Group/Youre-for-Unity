@@ -83,7 +83,7 @@ namespace YourePlugin
         /// <returns>AuthToken</returns>
         private AuthToken GetAuthToken()
         {
-            AuthToken set = new(
+            AuthToken set = new AuthToken(
                 PlayerPrefs.GetString("YOURE_token_id_token"),
                 PlayerPrefs.GetString("YOURE_token_access_token"),
                 PlayerPrefs.GetString("YOURE_token_refresh_token"));
@@ -101,7 +101,7 @@ namespace YourePlugin
         /// Task will NOT complete if any error occurs.
         /// </summary>
         /// <param name="authOptions"></param>
-        public async Task AuthenticateAsync(AuthOptions authOptions = new())
+        public async Task AuthenticateAsync(AuthOptions authOptions = new AuthOptions())
         {
             AuthToken cachedAuthToken = GetAuthToken();
             if (cachedAuthToken == null)
@@ -203,7 +203,7 @@ namespace YourePlugin
         {
 
 
-            TaskCompletionSource<YoureUser> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource<YoureUser> tcs = new TaskCompletionSource<YoureUser>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             string url = $"{_endpoint}/oauth/userInfo";
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -266,11 +266,11 @@ namespace YourePlugin
         /// <returns>AuthToken</returns>
         private async Task<AuthToken> RequestAccessTokenAsync(string authCode)
         {
-            TaskCompletionSource<AuthToken> tcs = new (TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource<AuthToken> tcs = new TaskCompletionSource<AuthToken>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             string url = $"{_endpoint}/oauth/token";
 
-            Dictionary<string, string> data = new()
+            Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "grant_type", "authorization_code" },
                 { "client_id", _clientId },
