@@ -6,6 +6,7 @@ using WebView2;
 using WebView2Forms;
 using YourePlugin.Data;
 using static YourePlugin.Authentication;
+using System.IO;
 
 namespace YourePlugin.WebView
 {
@@ -24,7 +25,7 @@ namespace YourePlugin.WebView
             get
             {
 #if UNITY_EDITOR
-                return (Application.dataPath + @"\\Packages\de.youre.forunity@d27434d8c8\WinWebView\Youre-ID.exe").Replace("Assets", "");
+                return Path.GetFullPath(@"Packages\de.youre.forunity\WinWebView\Youre-ID.exe"); 
 #else
                 return Application.dataPath + @"\Youre-ID.exe";
 #endif
