@@ -16,6 +16,7 @@ using YourePlugin.Data;
 using YourePlugin.Utils;
 using YourePlugin.WebView;
 using System.Runtime.InteropServices;
+using UnityEditor.PackageManager;
 
 
 namespace YourePlugin
@@ -32,7 +33,8 @@ namespace YourePlugin
         public event Action<YoureUser> SignInSucceeded;
         public event Action SignInShown;
         public event Action SignInRemoved;
-        //public event Action<AuthError> SignInFailed;
+        public event Action<string> SignInFailed;
+
         private readonly string _redirectUrl;
         private readonly string _endpoint;
         private readonly string _clientId;
@@ -69,12 +71,15 @@ namespace YourePlugin
         /// <summary>
         /// Requests global logout from currently logged in YOURE account
         /// </summary>
-        public void Logout()
+        public async Task Logout()
         {
             FlushTokenSetCache();
-            string url = $"{_endpoint}/v2/logout?returnTo={UnityWebRequest.EscapeURL(_redirectUrl)}";
+            string url = $"{_endpoint}/v2/logout?returnTo={UnityWebRequest.EscapeURL(_redirectUrl)}&client_id={_clientId}";
+            Debug.Log(url);
             UnityWebRequest request = UnityWebRequest.Get(url);
-            request.SendWebRequest();
+           request.SendWebRequest().completed += (obj)=> {
+               Debug.Log(request.downloadHandler.text);
+           };
         }
 
         /// <summary>
@@ -243,15 +248,22 @@ namespace YourePlugin
         {
             TaskCompletionSource<string> tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            _webviewHandler.CreateWebView(authOptions.SignInViewMargins, authOptions.SignInViewBackgroundTransparent);
-            _webviewHandler.OnAuthCodeReceived += (string authCode) => {
-                 SignInRemoved?.Invoke();
-                 tcs.SetResult(authCode);
+            void OnSuccess(string authCode) {
+                SignInRemoved?.Invoke();
+                tcs.SetResult(authCode);
             };
-            /*_webviewHandler.OnError += (string errorMsg) => {
-            AuthError error = new(104, "Error while loading login url: " + errorMsg);
-            SignInFailed?.Invoke(error);
-        };*/
+            void OnError(string error)
+            {
+                SignInFailed?.Invoke(error);
+            };
+
+            _webviewHandler.CreateWebView(authOptions.SignInViewMargins, authOptions.SignInViewBackgroundTransparent);
+
+            _webviewHandler.OnAuthCodeReceived -= OnSuccess;
+            _webviewHandler.OnAuthError -= OnError;
+
+            _webviewHandler.OnAuthCodeReceived += OnSuccess;
+            _webviewHandler.OnAuthError += OnError;
 
             _webviewHandler.LoadUrl(authUrl.Replace(" ", "%20"));
 
@@ -279,7 +291,6 @@ namespace YourePlugin
                 { "redirect_uri", _redirectUrl },
                 { "token_endpoint_auth_method", "none" }
             };
-            Debug.Log(url);
             UnityWebRequest request = UnityWebRequest.Post(url, data);
             UnityWebRequestAsyncOperation asyncOperation = request.SendWebRequest();
             asyncOperation.completed += aop =>

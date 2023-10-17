@@ -62,7 +62,7 @@ namespace YourePlugin
                 LogDebug("Already initiated");
                 return _instance;
             }
-        
+
             _instance = new Youre(clientId, endpointUrl, redirectUrl);
             return _instance;
         }

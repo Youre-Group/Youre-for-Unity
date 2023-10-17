@@ -8,6 +8,7 @@ namespace YourePlugin.WebView
         public abstract void CreateWebView(Authentication.AuthOptions.Margins margins, bool isBackgroundTransparent = false);
 
         public abstract event Action<string> OnAuthCodeReceived;
+        public abstract event Action<string> OnAuthError;
         public abstract void LoadUrl(string url);
         public abstract void DestroyWebView();
     }

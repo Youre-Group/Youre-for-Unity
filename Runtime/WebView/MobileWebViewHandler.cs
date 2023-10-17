@@ -6,12 +6,14 @@ namespace YourePlugin.WebView
     public class MobileWebViewHandler : WebViewHandler
     {
         public override event Action<string> OnAuthCodeReceived;
-        private WebViewObject _webView;
+        public override event Action<string> OnAuthError;
+
+        private WinWebViewObject _webView;
 
         public override void CreateWebView(Authentication.AuthOptions.Margins margins, bool isBackgroundTransparent = false)
         {
 
-            var webViewObject = (new GameObject("YOURESignInWebView")).AddComponent<WebViewObject>();
+            var webViewObject = (new GameObject("YOURESignInWebView")).AddComponent<WinWebViewObject>();
             UnityEngine.Object.DontDestroyOnLoad(webViewObject.gameObject);
 
            
@@ -38,6 +40,13 @@ namespace YourePlugin.WebView
                         Youre.LogDebug($"AuthorisationCode received: {authCode}");
                         OnAuthCodeReceived?.Invoke(authCode);
                         DestroyWebView();
+                    }
+
+                    if (msg.Contains("?error="))
+                    {
+                        Youre.LogDebug("Authentication error");
+                        DestroyWebView();
+                        OnAuthError?.Invoke("Authentication error");
                     }
                 },
                 hooked: (msg) =>
