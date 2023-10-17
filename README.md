@@ -4,7 +4,7 @@
 
 
 ### Supported Platforms: 
-Android, iOS, HTML5(WebGL)
+Android, iOS, HTML5(WebGL), Windows Desktop
 
 
 ## Installation via Unity Package Manager
@@ -48,7 +48,12 @@ public class SimpleAuthenticate : MonoBehaviour
         {
             Debug.Log("SignIn overlay closed");
         }; 
-    
+
+        Youre.Auth.SignInFailed += (string error) =>
+        {
+            Debug.Log("SignIn failed:" + error);
+        };
+
         Youre.Auth.SignInSucceeded += user =>
         {
             Debug.Log("Received YOURE User Id from callback: "+user.Id);
@@ -101,7 +106,7 @@ curl_close($ch);
 
 ## Misc
 
-### Logout
+### Logout (will also clear signInCache)
 ```c#
 Youre.Auth.Logout();
 ```
