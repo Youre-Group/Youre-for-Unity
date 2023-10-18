@@ -12,7 +12,7 @@ namespace YourePlugin.WebView
 
             var webViewObject = (new GameObject("YOURESignInWebView")).AddComponent<WebViewObject>();
             UnityEngine.Object.DontDestroyOnLoad(webViewObject.gameObject);
-
+           
            
             webViewObject.Init(
                 cb: (msg) =>
@@ -111,6 +111,9 @@ namespace YourePlugin.WebView
                 //// editor
                 //separated: false
             );
+            
+            webViewObject.ClearCookies();
+            
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             webViewObject.bitmapRefreshCycle = 1;
 #endif
