@@ -12,8 +12,6 @@ namespace YourePlugin.WebView
 {
     public class WinWebViewHandler : WebViewHandler
     {
-        public override event Action<string> OnAuthCodeReceived;
-        public override event Action<string> OnAuthError;
         private string _targetUrl;
         private GameObject _webViewObject;
         private IntPtr _hProcess;

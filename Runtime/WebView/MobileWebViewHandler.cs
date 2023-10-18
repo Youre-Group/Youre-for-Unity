@@ -5,9 +5,6 @@ namespace YourePlugin.WebView
 {
     public class MobileWebViewHandler : WebViewHandler
     {
-        public override event Action<string> OnAuthCodeReceived;
-        public override event Action<string> OnAuthError;
-
         private WinWebViewObject _webView;
 
         public override void CreateWebView(Authentication.AuthOptions.Margins margins, bool isBackgroundTransparent = false)

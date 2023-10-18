@@ -5,6 +5,8 @@ using System.IO;
 using System.IO.Pipes;
 using UnityEngine;
 using System.Timers;
+using System.Threading;
+using YourePlugin;
 
 namespace WebView2Forms
 {
@@ -21,26 +23,23 @@ namespace WebView2Forms
         public event Action Disconnected;
         public event Action<string> MessageReceived;
         private Task _t;
+        private Task _t2;
         private System.Threading.SynchronizationContext _mainThreadContext;
 
         private async void CheckPipe()
         {
-            if (_clientStream == null)
-                return;
-            try
+
+            while (_clientStream != null && _clientStream.IsConnected)
             {
-                _clientStream.ReadByte();
+                await Task.Delay(1000);
             }
-            catch {
-            }
+
             if (!_clientStream.IsConnected)
             {
                 _mainThreadContext.Post(_ => Disconnected?.Invoke(), null);
                 StopConnection();
-                return;
             }
-            await Task.Delay(1000);
-            CheckPipe();
+
         }
 
 
@@ -53,7 +52,7 @@ namespace WebView2Forms
                     await _clientStream.ConnectAsync(1000);
                 } catch
                 {
-                    Debug.Log("server not ready");
+                    Youre.LogDebug("server not ready");
                 }
                 await Task.Delay(100);
             }
@@ -63,12 +62,12 @@ namespace WebView2Forms
 
             _isConnected = true;
 
-            Debug.Log("Connected");
+            Youre.LogDebug("Connected");
 
             Connected?.Invoke();
             _mainThreadContext = System.Threading.SynchronizationContext.Current;
-            _t = Task.Run(() => CheckPipe());
-            ReadFromServer();
+            _t = Task.Run(()=>CheckPipe());
+            _t2 = Task.Run(() => ReadFromServer());
         }
 
 
@@ -90,13 +89,14 @@ namespace WebView2Forms
 
         public void StopConnection()
         {
-            Debug.Log("StopConnection");
             try 
-            {
+            {                
+
                 _isConnected = false;
                 _connectingToServer = false;
                 if(_clientStream != null)
                 {
+                    _clientStream.Flush();
                     _clientStream.Close();
                     _clientStream.Dispose();
                     _clientStream = null;
@@ -107,19 +107,22 @@ namespace WebView2Forms
                     _reader.Dispose();
                     _reader = null;
                 }
+
                 if (_writer != null)
-                {
+                { 
+                    _writer.Flush();
                     _writer.Close();
                     _writer.Dispose();
                     _writer = null;
                 }
-                
+                _t2?.Dispose();
+                _t2 = null;
                 _t?.Dispose();
                 _t = null;
             } 
             catch(Exception e)
             {
-                Debug.Log(e.Message);
+                Youre.LogDebug(e.Message);
                 _clientStream = null;
             }
            
@@ -136,12 +139,12 @@ namespace WebView2Forms
                 }
                 else
                 {
-                    Debug.Log($"PipeConnect SendString Not Possible is not Connected! Message= {message}");
+                    Youre.LogDebug($"PipeConnect SendString Not Possible is not Connected! Message= {message}");
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError("Error sending data to named pipe server: " + e.Message);
+                Youre.LogDebug("Error sending data to named pipe server: " + e.Message);
             }
         }
 
@@ -152,12 +155,12 @@ namespace WebView2Forms
                 string message = await _reader.ReadLineAsync();
                 if (message != null)
                 {
-                    MessageReceived?.Invoke(message);
+                    _mainThreadContext.Post(_ => MessageReceived?.Invoke(message), null);
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError("ReadFromServer - Error reading data from named pipe server: " + e.Message);
+                Youre.LogDebug("ReadFromServer - Error reading data from named pipe server: " + e.Message);
             }
 
             await Task.Delay(300);

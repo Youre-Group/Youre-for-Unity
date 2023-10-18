@@ -17,7 +17,7 @@ using YourePlugin.Utils;
 using YourePlugin.WebView;
 using System.Runtime.InteropServices;
 using UnityEditor.PackageManager;
-
+using PlasticPipe.Server;
 
 namespace YourePlugin
 {
@@ -75,11 +75,7 @@ namespace YourePlugin
         {
             FlushTokenSetCache();
             string url = $"{_endpoint}/v2/logout?returnTo={UnityWebRequest.EscapeURL(_redirectUrl)}&client_id={_clientId}";
-            Debug.Log(url);
             UnityWebRequest request = UnityWebRequest.Get(url);
-           request.SendWebRequest().completed += (obj)=> {
-               Debug.Log(request.downloadHandler.text);
-           };
         }
 
         /// <summary>
@@ -128,7 +124,11 @@ namespace YourePlugin
 #else
                 authCode = await RequestAuthCodeAsync(loginUrl, authOptions);
 #endif
-                if (!string.IsNullOrEmpty(authCode))
+                if (authCode == "-1") {
+                    FlushTokenSetCache();
+                    return;
+                }
+                else if (!string.IsNullOrEmpty(authCode))
                 {
                     AuthToken newAuthToken = await RequestAccessTokenAsync(authCode);
                     cachedAuthToken = CacheTokenSet(newAuthToken);
@@ -254,16 +254,14 @@ namespace YourePlugin
             };
             void OnError(string error)
             {
+                tcs.SetResult("-1");
                 SignInFailed?.Invoke(error);
             };
 
             _webviewHandler.CreateWebView(authOptions.SignInViewMargins, authOptions.SignInViewBackgroundTransparent);
 
-            _webviewHandler.OnAuthCodeReceived -= OnSuccess;
-            _webviewHandler.OnAuthError -= OnError;
-
-            _webviewHandler.OnAuthCodeReceived += OnSuccess;
-            _webviewHandler.OnAuthError += OnError;
+            _webviewHandler.OnAuthCodeReceived = OnSuccess;
+            _webviewHandler.OnAuthError = OnError;
 
             _webviewHandler.LoadUrl(authUrl.Replace(" ", "%20"));
 
