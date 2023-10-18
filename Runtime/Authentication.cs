@@ -16,8 +16,6 @@ using YourePlugin.Data;
 using YourePlugin.Utils;
 using YourePlugin.WebView;
 using System.Runtime.InteropServices;
-using UnityEditor.PackageManager;
-using PlasticPipe.Server;
 
 namespace YourePlugin
 {
