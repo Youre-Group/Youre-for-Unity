@@ -5,12 +5,12 @@ namespace YourePlugin.WebView
 {
     public class MobileWebViewHandler : WebViewHandler
     {
-        private WinWebViewObject _webView;
+        private WebViewObject _webView;
 
         public override void CreateWebView(Authentication.AuthOptions.Margins margins, bool isBackgroundTransparent = false)
         {
 
-            var webViewObject = (new GameObject("YOURESignInWebView")).AddComponent<WinWebViewObject>();
+            var webViewObject = (new GameObject("YOURESignInWebView")).AddComponent<WebViewObject>();
             UnityEngine.Object.DontDestroyOnLoad(webViewObject.gameObject);
 
            
