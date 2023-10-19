@@ -27,8 +27,13 @@ namespace YourePlugin.WebView
                 httpErr: (msg) =>
                 {
                     Youre.LogDebug(string.Format("Error while loading login url: CallOnHttpError[{0}]", msg));
-                    DestroyWebView();
-                    OnAuthError?.Invoke("Authentication error");
+                    if (msg != "401")
+                    {
+                        DestroyWebView();
+                        OnAuthError?.Invoke("Authentication error");  
+                    }
+                
+              
                 },
                 started: (msg) =>
                 {
