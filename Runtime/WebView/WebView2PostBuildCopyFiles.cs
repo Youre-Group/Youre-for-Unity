@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if UNITY_EDITOR_WIN
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;

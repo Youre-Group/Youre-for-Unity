@@ -22,11 +22,13 @@ namespace YourePlugin.WebView
                 {
                     Youre.LogDebug(string.Format("Error while loading login url: [{0}]", msg));
                     DestroyWebView();
+                    OnAuthError?.Invoke("Authentication error");
                 },
                 httpErr: (msg) =>
                 {
                     Youre.LogDebug(string.Format("Error while loading login url: CallOnHttpError[{0}]", msg));
                     DestroyWebView();
+                    OnAuthError?.Invoke("Authentication error");
                 },
                 started: (msg) =>
                 {
