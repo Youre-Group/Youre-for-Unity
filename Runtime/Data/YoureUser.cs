@@ -27,5 +27,11 @@ namespace YourePlugin.Data
 
         [JsonProperty("email_verified")] 
         public string EmailVerified;
+        
+        [JsonProperty("newsletter")] 
+        public string NewsletterAccepted;
+        
+        [JsonProperty("terms")] 
+        public string TermsAccepted;
     }
 }
