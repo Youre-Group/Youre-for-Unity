@@ -58,6 +58,8 @@ public class SimpleAuthenticate : MonoBehaviour
         {
             Debug.Log("Received YOURE User Id from callback: "+user.Id);
             Debug.Log("Received YOURE Auth0 access token from callback: "+user.AccessToken);
+            Debug.Log("Received YOURE Auth0 newsletter accepted: "+user.NewsletterAccepted);
+            Debug.Log("Received YOURE Auth0 terms accepted: "+user.TermsAccepted);
         };
         
         StartAuthenticationAsync();
