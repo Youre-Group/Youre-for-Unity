@@ -139,16 +139,24 @@ namespace YourePlugin
 					return;
                 }
             }
-    		
+
             // Try to get UserInfo with current access token
             YoureUser user = await GetUserInfo(cachedAuthToken);
             if (user == null) // we assume that token is expired here
             {
-                // Clear token cache and restart auth process from scratch (after delay)
-                FlushTokenSetCache();
-                await Task.Delay(2000);
-                await AuthenticateAsync(authOptions);
-				return;
+                AuthToken newAuthToken = await RefreshTokenAsync(cachedAuthToken.RefreshToken);
+                if (newAuthToken == null)
+                {
+                    // Clear token cache and restart auth process from scratch (after delay)
+                    FlushTokenSetCache();
+                    await Task.Delay(2000);
+                    await AuthenticateAsync(authOptions);
+                    return;
+                }
+                
+                cachedAuthToken = CacheTokenSet(newAuthToken);
+                await Task.Delay(1000);
+                AuthenticateAsync(authOptions);
             }
             SignInSucceeded?.Invoke(user);
         }
@@ -192,7 +200,7 @@ namespace YourePlugin
             url += $"&redirect_uri={UnityWebRequest.EscapeURL(_redirectUrl)}";
             url += "&response_type=code";
             url += "&token_endpoint_auth_method=none";
-            url += $"&scope={UnityWebRequest.EscapeURL("openid email profile")}";
+            url += $"&scope={UnityWebRequest.EscapeURL("openid email profile offline_access")}";
             url += $"&code_challenge={Pkce.CodeChallenge}";
             url += "&code_challenge_method=S256";
             return url;
@@ -268,6 +276,53 @@ namespace YourePlugin
             return tcs.Task.Result;
         }
 
+        
+        
+        
+        /// <summary>
+        /// Will try to refresh tokes with refreshtoken
+        /// /// </summary>
+        /// <returns>AuthToken</returns>
+        private async Task<AuthToken?> RefreshTokenAsync(string refreshToken)
+        {
+            Youre.LogDebug("Try to refresh tokenset");
+            TaskCompletionSource<AuthToken> tcs = new TaskCompletionSource<AuthToken>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            string url = $"{_endpoint}/oauth/token";
+
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "grant_type", "refresh_token" },
+                { "client_id", _clientId },
+                {"scope", "openid email profile offline_access"},
+                { "redirect_uri", _redirectUrl },
+                { "refresh_token", refreshToken }
+            };
+            UnityWebRequest request = UnityWebRequest.Post(url, data);
+            UnityWebRequestAsyncOperation asyncOperation = request.SendWebRequest();
+            asyncOperation.completed += aop =>
+            {
+        
+                try
+                {
+                    string tokenData = request.downloadHandler.text;
+                    AuthToken authToken = JsonConvert.DeserializeObject<AuthToken>(tokenData);
+                    Youre.LogDebug("Access Token set received: "+authToken.AccessToken);
+                    tcs.SetResult(authToken);
+                }
+                catch (Exception)
+                {
+                    Youre.LogDebug("Error while parsing token data: "+request.downloadHandler.text);
+                    tcs.SetResult(null);
+                }
+            };
+        
+            await tcs.Task;
+            return tcs.Task.Result;
+        }
+
+        
+        
         /// <summary>
         /// Will try to retrieve access tokens
         /// </summary>

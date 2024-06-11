@@ -14,3 +14,10 @@ All notable changes to this project will be documented in this file.
 ### Fix
 
 - Windows Webview executable file will not be copied on other platforms anymore
+
+
+## [1.3.0] - 2024-06-11
+
+### Added
+
+- Token will now be refreshed on AuthenticateAsync
