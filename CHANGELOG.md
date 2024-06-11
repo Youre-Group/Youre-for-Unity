@@ -8,3 +8,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Basic SignIn functionality
+
+## [1.2.11] - 2024-06-11
+
+### Fix
+
+- Windows Webview executable file will not be copied on other platforms anymore

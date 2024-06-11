@@ -20,6 +20,9 @@ public static class WebView2PostBuildCopyFiles
     [PostProcessBuild]
     public static void Start(BuildTarget target, string buildDirectory)
     {
+        if(target == BuildTarget.Android || target == BuildTarget.iOS)
+            return;
+
         var path = new StackTrace(true).GetFrame(0).GetFileName();
         var pathWebView2 = Directory.GetParent(path).Parent.Parent.FullName;
         var pathBuild = Directory.GetParent(buildDirectory).FullName + "/" + Application.productName + "_Data";
