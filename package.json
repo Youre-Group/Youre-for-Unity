@@ -1,6 +1,6 @@
 {
   "name": "de.youre.forunity",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "license": "MIT",
   "displayName": "YOURE for Unity",
   "description": "The YOURE Sign In Component Unity Package provides a simple and convenient way for Unity developers to integrate YOURE sign-in functionality into their applications. With this package, users can quickly and easily sign in to YOURE and access their accounts without leaving the Unity environment.",

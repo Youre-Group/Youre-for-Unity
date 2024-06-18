@@ -21,3 +21,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Token will now be refreshed on AuthenticateAsync
+
+## [1.3.1] - 2024-06-18
+
+### Fix
+
+- Fixed a bug that sometimes returned null user object on authenticate

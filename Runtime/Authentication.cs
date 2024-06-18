@@ -157,6 +157,7 @@ namespace YourePlugin
                 cachedAuthToken = CacheTokenSet(newAuthToken);
                 await Task.Delay(1000);
                 AuthenticateAsync(authOptions);
+                return;
             }
             SignInSucceeded?.Invoke(user);
         }
