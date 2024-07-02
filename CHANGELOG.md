@@ -27,3 +27,9 @@ All notable changes to this project will be documented in this file.
 ### Fix
 
 - Fixed a bug that sometimes returned null user object on authenticate
+
+## [1.3.2] - 2024-07-02
+
+### Fix
+
+- Fixed register form errors on android  
