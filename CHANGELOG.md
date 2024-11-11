@@ -15,7 +15,6 @@ All notable changes to this project will be documented in this file.
 
 - Windows Webview executable file will not be copied on other platforms anymore
 
-
 ## [1.3.0] - 2024-06-11
 
 ### Added
@@ -33,3 +32,11 @@ All notable changes to this project will be documented in this file.
 ### Fix
 
 - Fixed register form errors on android  
+
+## [2.0.0] - 2024-11-06
+
+### Breaking Changes
+
+- YOURE.ID based now on keycloak openid connect 
+- New ClientID and URI are needed!
+- Webview mechanics were replaced with external browser

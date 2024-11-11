@@ -6,6 +6,7 @@
  * arising from the use of this software.
  */
 
+using Auth;
 using UnityEngine;
 
 namespace YourePlugin
@@ -20,7 +21,7 @@ namespace YourePlugin
         /// <summary>
         /// YOURE authentication module; used to request YoureID;
         /// </summary>
-        public static Authentication Auth
+        public static Authentication Authentication
         {
             get
             {
@@ -43,9 +44,10 @@ namespace YourePlugin
         private static Youre _instance;
         private static Authentication _auth;
 
-        private Youre(string clientId, string endpointUrl, string redirectUrl)
+        private Youre(string clientId, string endpointUrl, string deeplinkScheme)
         {
-            _auth = new Authentication(clientId, endpointUrl, redirectUrl);
+           
+            _auth = new Authentication(clientId, endpointUrl, deeplinkScheme);
         }
     
         /// <summary>
@@ -53,9 +55,9 @@ namespace YourePlugin
         /// </summary>
         /// <param name="clientId">Please request this id from technical support</param>
         /// <param name="endpointUrl">Please request this id from technical support</param>
-        /// <param name="redirectUrl">Please request this id from technical support</param>
+        /// <param name="deeplinkScheme">Please request this id from technical support</param>
         /// <returns></returns>
-        public static Youre Init(string clientId, string endpointUrl, string redirectUrl)
+        public static Youre Init(string clientId, string endpointUrl, string deeplinkScheme)
         {
             if (_instance != null)
             {
@@ -63,15 +65,20 @@ namespace YourePlugin
                 return _instance;
             }
 
-            _instance = new Youre(clientId, endpointUrl, redirectUrl);
+            _instance = new Youre(clientId, endpointUrl, deeplinkScheme);
             return _instance;
         }
     
         internal static void LogDebug(string message)
         {
-            if (DebugMode)
-                Debug.Log($"[YOURE] {message}");
-        }
 
+            if (DebugMode)
+            {
+                Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+                Debug.Log($"[YOURE] {message}");
+            }
+ 
+        }
+ 
     }
 }

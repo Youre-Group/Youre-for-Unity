@@ -1,14 +1,12 @@
 # Youre-for-Unity
 
-> The YOURE Sign In Component Unity Package provides a simple and convenient way for Unity developers to integrate YOURE sign-in functionality into their applications. With this package, users can quickly and easily sign in to YOURE and access their accounts without leaving the Unity environment.
-
+> The YOURE.ID Sign In Component Unity Package provides a simple and convenient way for Unity developers to integrate YOURE sign-in functionality into their applications. With this package, users can quickly and easily sign in to YOURE and access their accounts without leaving the Unity environment.
 
 ### Supported Platforms: 
-Android, iOS, HTML5(WebGL), Windows Desktop
-
+Android, iOS, 
 
 ## Installation via Unity Package Manager
-
+s
 Installing a Unity Package via Git URL
 You can install a Unity package via Git URL using the Package Manager. Here are the steps to follow:
 1. Open your Unity project.
@@ -19,14 +17,40 @@ You can install a Unity package via Git URL using the Package Manager. Here are 
 6. Once the installation is complete, the package will be available in your project and you can start using it.
 
 ### iOS
-To compile on iOS you will need to add **WebKit.framework** to the **UnityFramework Target** in XCODE manually.
++ To compile on iOS you will need to add **SafariServices.framework** to the **UnityFramework Target** AND the **Unity-Iphone Target** (main build target) in XCODE manually. (General > Frameworks, Libraries, and Embedded Content)
++ Add following into the info.plist and
+fill in your deeplink scheme (you will have to coordinate this with YOURE Dev Support)
+
+```
+<key>CFBundleURLTypes</key>
+    <array>
+    ....
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>youre.id</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>{YOUR_DEEPLINK_SCHEME}</string>
+            </array>
+        </dict>
+    ....
+    </array>
+```
 
 ### Android Manifest
-If you experience low performance within the signup, please make sure to activate hardware acceleration (`android:hardwareAccelerated="true"`) for the main activity (AndroidManifest.xml in `unityLibrary` module)
-
-> More information regarding hardware acceleration in unity: https://forum.unity.com/threads/android-hardwareaccelerated-is-forced-false-in-all-activities.532786/
-
-
++ Add following into the < application > tag and fill in your deeplink scheme (you will have to coordinate this with YOURE Dev Support)
+```
+<activity android:name="org.identitymodel.unityclient.AuthRedirectActivity" android:label="@string/app_name" android:exported="true">
+  <intent-filter>
+    <action android:name="android.intent.action.VIEW"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+    <category android:name="android.intent.category.BROWSABLE"/>
+    <data android:scheme="{YOUR_DEEPLINK_SCHEME}" android:host="keycloak_callback" />
+  </intent-filter>
+</activity>
+```
 
 
 ## Usage
@@ -36,19 +60,10 @@ public class SimpleAuthenticate : MonoBehaviour
 {
     private void Start()
     {
-        // YOURE Games will provide you with client id, endpoint url, redirect url
-        Youre.Init("ENTER YOUR CLIENT ID","https://ENTER YOUR ENDPOINT URL","https://ENTER_YOUR_REDIRECT_URL");
+        // YOURE Games will provide you with client id, endpoint url
+        // The deeplink scheme has to be coordinated with YOURE.
+        Youre.Init("ENTER YOUR CLIENT ID","https://ENTER YOUR ENDPOINT URL","ENTER_YOUR_DEEPLINK_SCHEME");
     
-        Youre.Auth.SignInShown += () =>
-        {
-            Debug.Log("SignIn overlay visible");
-        };        
-    
-        Youre.Auth.SignInRemoved += () =>
-        {
-            Debug.Log("SignIn overlay closed");
-        }; 
-
         Youre.Auth.SignInFailed += (string error) =>
         {
             Debug.Log("SignIn failed:" + error);
@@ -56,73 +71,23 @@ public class SimpleAuthenticate : MonoBehaviour
 
         Youre.Auth.SignInSucceeded += user =>
         {
-            Debug.Log("Received YOURE User Id from callback: "+user.Id);
-            Debug.Log("Received YOURE Auth0 access token from callback: "+user.AccessToken);
-            Debug.Log("Received YOURE Auth0 newsletter accepted: "+user.NewsletterAccepted);
-            Debug.Log("Received YOURE Auth0 terms accepted: "+user.TermsAccepted);
+            Debug.Log("Received YOURE.ID from callback: "+user.Id);
+            Debug.Log("Received YOURE User Name from callback: "+user.UserName);
+            Debug.Log("Received YOURE User Email from callback: "+user.Email);
         };
         
-        StartAuthenticationAsync();
-    }
-
-    private async void StartAuthenticationAsync()
-    {
-        var options = new Authentication.AuthOptions
-        {
-            // SignInViewBackgroundTransparent = true,
-            SignInViewMargins = new Authentication.AuthOptions.Margins(0,0,0,0),
-        };
-        
-        await Youre.Auth.AuthenticateAsync(options);
+        Youre.Auth.SignIn();
     }
 }
 ```
-
-## Example Server Validation (php)
-```php
-$endpoint = 'YOUR_ENDPOINT_URL'; // Replace with your actual endpoint URL
-$authToken =  'YOUR_ACCESS_TOKEN'; // Replace with actual access token generated from client
-
-
-$url = $endpoint . '/oauth/userInfo';
-
-$ch = curl_init($url);
-
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Authorization: Bearer ' . $authToken
-]);
-
-$response = curl_exec($ch);
-
-if (curl_errno($ch)) {
-    echo 'Error: ' . curl_error($ch);
-} else {
-    // Handle the response here
-    echo $response;
-}
-
-curl_close($ch);
-```
-
 
 ## Misc
 
-### Logout (will also clear signInCache)
+### Logout 
 ```c#
-Youre.Auth.Logout();
-```
-
-### Force SignIn Overlay to close
-```c#
-Youre.Auth.DestroySignInOverlay();
-```
-
-### Clear signin cache to force fresh signin process
-```c#
-Youre.Auth.ClearSignInCache();
+bool isSignedOut = await Youre.Auth.SignOut();
 ```
 
 ### License
 
-Copyright © 2023, YOURE Games, The MIT License (MIT)
+Copyright © 2024, YOURE Games, The MIT License (MIT)

@@ -6,32 +6,14 @@
  * arising from the use of this software.
  */
 
-using System;
-using Newtonsoft.Json;
-
-namespace YourePlugin.Data
+namespace Data
 {
-    [Serializable]
     public class YoureUser
     {
-        [JsonProperty("sub"), JsonRequired]
-        public string Sub;
-        public string AccessToken { get; set; }
-        public string Id => Sub.Split('|')[1];
-
-        [JsonProperty("email")] 
-        public string Email;
-
-        [JsonProperty("username")] 
-        public string UserName;
-
-        [JsonProperty("email_verified")] 
-        public string EmailVerified;
-        
-        [JsonProperty("newsletter")] 
-        public bool NewsletterAccepted;
-        
-        [JsonProperty("terms")] 
-        public bool TermsAccepted;
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string UserName { get; set; }
+       // public bool NewsletterAccepted{ get; set; }
+       // public bool TermsAccepted{ get; set; }
     }
 }
