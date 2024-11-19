@@ -13,6 +13,7 @@ namespace Data
         public string Id { get; set; }
         public string Email { get; set; }
         public string UserName { get; set; }
+        public string AccessToken { get; set; }
        // public bool NewsletterAccepted{ get; set; }
        // public bool TermsAccepted{ get; set; }
     }

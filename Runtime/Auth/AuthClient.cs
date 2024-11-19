@@ -89,6 +89,7 @@ namespace Auth
                   Email = _result.User.Claims.First((c)=>c.Type == "email").Value,
                   UserName = _result.User.Claims.First((c) => c.Type == "preferred_username").Value,
                   UserId = _result.User.Claims.First((c) => c.Type == "sub").Value,
+                  AccessToken = _result.AccessToken,
                 };
                 return result;
             }

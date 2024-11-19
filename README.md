@@ -72,6 +72,7 @@ public class SimpleAuthenticate : MonoBehaviour
         Youre.Auth.SignInSucceeded += user =>
         {
             Debug.Log("Received YOURE.ID from callback: "+user.Id);
+            Debug.Log("Received YOURE AccessToken from callback: "+user.AccessToken);
             Debug.Log("Received YOURE User Name from callback: "+user.UserName);
             Debug.Log("Received YOURE User Email from callback: "+user.Email);
         };

@@ -44,3 +44,7 @@ All notable changes to this project will be documented in this file.
 ## [2.0.1] - 2024-11-19
 
 - Removed dll to resolve conflict. Can be a problem later with other projects
+- 
+## [2.0.3] - 2024-11-19
+
+- Added AccessToken to user object.
