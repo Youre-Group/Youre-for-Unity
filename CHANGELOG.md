@@ -40,3 +40,7 @@ All notable changes to this project will be documented in this file.
 - YOURE.ID based now on keycloak openid connect 
 - New ClientID and URI are needed!
 - Webview mechanics were replaced with external browser
+
+## [2.0.1] - 2024-11-19
+
+- Removed dll to resolve conflict. Can be a problem later with other projects
