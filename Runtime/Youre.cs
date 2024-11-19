@@ -21,7 +21,7 @@ namespace YourePlugin
         /// <summary>
         /// YOURE authentication module; used to request YoureID;
         /// </summary>
-        public static Authentication Authentication
+        public static Authentication Auth
         {
             get
             {
