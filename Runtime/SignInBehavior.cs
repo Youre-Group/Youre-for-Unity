@@ -32,6 +32,7 @@ public class SignInBehavior : MonoBehaviour {
     [ItemCanBeNull]
     public async Task<AuthClientResult> SignIn(AuthClient authClient)
     {
+        
         _authClient = authClient;
         _replyReceived = false;
         _signinCancelled = false;
@@ -103,6 +104,7 @@ public class SignInBehavior : MonoBehaviour {
     void OnApplicationPause(bool pauseStatus)
     {
         Youre.LogDebug("OnApplicationPause: "+pauseStatus);
+        
         var resumed = !pauseStatus;
         if (resumed)
         {
@@ -111,7 +113,10 @@ public class SignInBehavior : MonoBehaviour {
             {
                 if (!_replyReceived)
                 {
-                    Youre.LogDebug("Watching for auth reply.");
+                    Youre.LogDebug(Application.absoluteURL);
+                    if (Application.absoluteURL != "" && !Application.absoluteURL.EndsWith("keycloak_callback"))
+                        _authClient.Browser.OnAuthReply(Application.absoluteURL);
+           
                     _watchForReply = true;
                     _watchForReplyStartTime = DateTime.Now;
                 }
@@ -137,17 +142,13 @@ public class SignInBehavior : MonoBehaviour {
         _signinCancelled = true;
         _authClient.Browser.OnAuthReply(null);
     }
-
     public void OnAuthReply(object value)
     {
-        Youre.LogDebug("OnAuthReply: " + value);
         if (!_signinCancelled)
         {
             _watchForReply = false;
             _replyReceived = true;
-            Youre.LogDebug("OnAuthReply: " + value);
             _authClient.Browser.OnAuthReply(value as string);
         }
     }
-
 }

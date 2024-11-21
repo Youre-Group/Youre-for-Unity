@@ -40,16 +40,14 @@ fill in your deeplink scheme (you will have to coordinate this with YOURE Dev Su
 ```
 
 ### Android Manifest
-+ Add following into the < application > tag and fill in your deeplink scheme (you will have to coordinate this with YOURE Dev Support)
++ Add following into the main < activity > tag and fill in your deeplink scheme (you will have to coordinate this with YOURE Dev Support)
 ```
-<activity android:name="org.identitymodel.unityclient.AuthRedirectActivity" android:label="@string/app_name" android:exported="true">
   <intent-filter>
     <action android:name="android.intent.action.VIEW"/>
     <category android:name="android.intent.category.DEFAULT"/>
     <category android:name="android.intent.category.BROWSABLE"/>
     <data android:scheme="{YOUR_DEEPLINK_SCHEME}" android:host="keycloak_callback" />
   </intent-filter>
-</activity>
 ```
 
 
@@ -88,6 +86,10 @@ public class SimpleAuthenticate : MonoBehaviour
 ```c#
 bool isSignedOut = await Youre.Auth.SignOut();
 ```
+
+## ISSUES
+Due to compatibility we removed this dll from package. Please add this to project manually if you have compiler issues.
+- System.Runtime.CompilerServices.Unsafe.dll
 
 ### License
 

@@ -48,3 +48,7 @@ All notable changes to this project will be documented in this file.
 ## [2.0.3] - 2024-11-19
 
 - Added AccessToken to user object.
+- 
+## [2.0.4] - 2024-11-21
+
+- Reworked android to avoid activity switching
