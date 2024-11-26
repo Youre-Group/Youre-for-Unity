@@ -69,6 +69,7 @@ namespace YourePlugin
                     Id = result.UserId,
                     Email = result.Email,
                     UserName = result.UserName,
+                    AccessToken = result.AccessToken,
                 };
                 SignInSucceeded?.Invoke(user);
             }

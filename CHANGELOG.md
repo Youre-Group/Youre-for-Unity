@@ -52,3 +52,7 @@ All notable changes to this project will be documented in this file.
 ## [2.0.4] - 2024-11-21
 
 - Reworked android to avoid activity switching
+- 
+## [2.0.5] - 2024-11-26
+
+- Fixed AccessToken return value
