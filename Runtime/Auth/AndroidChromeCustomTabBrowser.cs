@@ -11,7 +11,7 @@ using YourePlugin;
 
 namespace Auth
 {
-    public class AndroidChromeCustomTabBrowser : MobileBrowser
+    public class AndroidChromeCustomTabBrowser : Browser
     {
         protected override void Launch(string url)
         {

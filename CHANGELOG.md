@@ -56,3 +56,8 @@ All notable changes to this project will be documented in this file.
 ## [2.0.5] - 2024-11-26
 
 - Fixed AccessToken return value
+
+## [2.1.0] - 2025-01-22
+
+- Added Windows Platform (Beta)
+- Added methods to check login status

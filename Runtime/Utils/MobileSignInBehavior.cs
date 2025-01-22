@@ -13,7 +13,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using YourePlugin;
 
-public class SignInBehavior : MonoBehaviour {
+public class MobileSignInBehavior : MonoBehaviour {
 
     private bool _replyReceived;
     private bool _authOperationInProgress;

@@ -3,7 +3,7 @@
 > The YOURE.ID Sign In Component Unity Package provides a simple and convenient way for Unity developers to integrate YOURE sign-in functionality into their applications. With this package, users can quickly and easily sign in to YOURE and access their accounts without leaving the Unity environment.
 
 ### Supported Platforms: 
-Android, iOS, 
+Android, iOS, Windows(Beta), OSX (Soon)
 
 ## Installation via Unity Package Manager
 s
@@ -62,9 +62,9 @@ public class SimpleAuthenticate : MonoBehaviour
         // The deeplink scheme has to be coordinated with YOURE.
         Youre.Init("ENTER YOUR CLIENT ID","https://ENTER YOUR ENDPOINT URL","ENTER_YOUR_DEEPLINK_SCHEME");
     
-        Youre.Auth.SignInFailed += (string error) =>
+        Youre.Auth.SignInFailed += () =>
         {
-            Debug.Log("SignIn failed:" + error);
+            Debug.Log("SignIn failed:");
         };
 
         Youre.Auth.SignInSucceeded += user =>
@@ -77,20 +77,48 @@ public class SimpleAuthenticate : MonoBehaviour
         
         Youre.Auth.SignIn();
     }
+    
+    private async void AutoSignIn()
+    {
+      if(Youre.Auth.WasSignedIn())
+      {
+         YoureUser user = await Youre.Auth.GetActiveUser();
+         if(user == null)
+         {
+            await Youre.Auth.SignIn();
+         }
+      }
+    }
+
+    
 }
 ```
 
-## Misc
+## Methods
 
-### Logout 
+### Youre.Auth.WasSignedIn()
+```c#
+// Will return TRUE if Youre.Id user was signed-in
+bool wasSignedIn = Youre.Auth.WasSignedIn();
+```
+
+
+### Youre.Auth.GetActiveUser()
+```c#
+// Will return the YoureUser if user was signed-in and session is still valid
+YoureUser user = await Youre.Auth.GetActiveUser();
+```
+
+### Youre.Auth.SignOut()
 ```c#
 bool isSignedOut = await Youre.Auth.SignOut();
 ```
 
 ## ISSUES
-Due to compatibility we removed this dll from package. Please add this to project manually if you have compiler issues.
+Due to compatibility we removed dlls from package. Please add to project manually if you have compiler issues.
 - System.Runtime.CompilerServices.Unsafe.dll
+- Newtonsoft.Json.dll
 
 ### License
 
-Copyright © 2024, YOURE Games, The MIT License (MIT)
+Copyright © 2025, YOURE Games, The MIT License (MIT)

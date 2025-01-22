@@ -9,7 +9,7 @@
 
 namespace Auth
 {
-    public class SFSafariViewBrowser : MobileBrowser
+    public class SFSafariViewBrowser : Browser
     {
         protected override void Launch(string url)
         {

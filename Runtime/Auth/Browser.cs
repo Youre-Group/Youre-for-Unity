@@ -15,7 +15,7 @@ using YourePlugin;
 
 namespace Auth
 {
-    public abstract class MobileBrowser : IBrowser
+    public abstract class Browser : IBrowser
     {
         private TaskCompletionSource<BrowserResult> _task;
         protected abstract void Launch(string url);

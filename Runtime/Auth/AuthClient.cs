@@ -27,17 +27,35 @@ namespace Auth
 
         public AuthClient(string clientId, string authority, string redirectUrl)
         {
+
+            //
+            if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                Youre.LogDebug("Sorry, SSO within Editor is not supported yet.");
+                return;
+            }
+            
             // We must disable the IdentityModel log serializer to avoid Json serialize exceptions on IOS.
 #if UNITY_IOS
             LogSerializer.Enabled = false;
 #endif
             // See: https://www.youtube.com/watch?v=DdQTXrk6YTk
             // And for unity integration, see: https://qiita.com/lucifuges/items/b17d602417a9a249689f (Google translate to English!)
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
             Browser = new AndroidChromeCustomTabBrowser();
-#elif UNITY_IOS
+#elif UNITY_IOS && !UNITY_EDITOR
             Browser = new SFSafariViewBrowser();
+#else
+            if (Application.platform == RuntimePlatform.OSXPlayer ) // || Application.platform == RuntimePlatform.OSXEditor
+            {
+                Browser = new MacOSBrowser();
+            }
+            else if (Application.platform == RuntimePlatform.WindowsPlayer ) // || Application.platform == RuntimePlatform.WindowsEditor
+            {
+                Browser = new WindowsBrowser();
+            }
 #endif
+            
             CertificateHandler.Initialize();
             
             var options = new OidcClientOptions()
@@ -64,6 +82,7 @@ namespace Auth
                 if (_client == null)
                 {
                     Youre.LogDebug("no client inited");
+                    return null;
                 }
                 _result = await _client.LoginAsync(new LoginRequest());
             }
@@ -74,7 +93,7 @@ namespace Auth
             finally
             {
                 Youre.LogDebug("Dismissing sign-in browser.");
-                Browser.Dismiss();
+                Browser?.Dismiss();
             }
 
             if (_result == null || _result.IsError)
@@ -124,6 +143,6 @@ namespace Auth
             return false;
         }
 
-        public MobileBrowser Browser { get; }
+        public Browser Browser { get; }
     }
 }
