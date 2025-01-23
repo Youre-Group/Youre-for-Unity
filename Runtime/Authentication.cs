@@ -32,7 +32,7 @@ namespace YourePlugin
         public bool WasSignedIn()
         {
             string savedId = PlayerPrefs.GetString("YREID_lastID");
-            if (savedId == null)
+            if (string.IsNullOrEmpty(savedId))
                 return false;
 
             return true;
@@ -54,11 +54,11 @@ namespace YourePlugin
         public async Task<YoureUser> GetActiveUser()
         {
             string savedId = PlayerPrefs.GetString("YREID_lastID");
-            if (savedId == null)
+            if (string.IsNullOrEmpty(savedId))
                 return null;
 
             string savedAccessToken = PlayerPrefs.GetString("YREID_lastAccessToken");
-            if(savedAccessToken == null)
+            if(string.IsNullOrEmpty(savedAccessToken))
                 return null;
 
             UnityWebRequest request = UnityWebRequest.Get($"{_authority}/protocol/openid-connect/userinfo");

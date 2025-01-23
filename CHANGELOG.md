@@ -65,3 +65,7 @@ All notable changes to this project will be documented in this file.
 ## [2.1.1] - 2025-01-23
 
 - Fixed unity version compatibility 
+- 
+## [2.1.2] - 2025-01-23
+
+- Fixed string empty handling
