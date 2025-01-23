@@ -61,3 +61,7 @@ All notable changes to this project will be documented in this file.
 
 - Added Windows Platform (Beta)
 - Added methods to check login status
+
+## [2.1.1] - 2025-01-23
+
+- Fixed unity version compatibility 

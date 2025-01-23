@@ -37,6 +37,16 @@ namespace YourePlugin
 
             return true;
         }
+        
+        private async Task SendRequestAsync(UnityWebRequest request)
+        {
+            var operation = request.SendWebRequest();
+
+            while (!operation.isDone)
+            {
+                await Task.Yield();
+            }
+        }
 
         /// <summary>
         /// Will return YoureUser Object if previous session is still valid
@@ -53,7 +63,7 @@ namespace YourePlugin
 
             UnityWebRequest request = UnityWebRequest.Get($"{_authority}/protocol/openid-connect/userinfo");
             request.SetRequestHeader("Authorization", "Bearer " + savedAccessToken);
-            await request.SendWebRequest();
+            await SendRequestAsync(request);
 
             if (request.result == UnityWebRequest.Result.Success)
             {
