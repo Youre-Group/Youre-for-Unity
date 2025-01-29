@@ -64,33 +64,37 @@ public class SimpleAuthenticate : MonoBehaviour
     
         Youre.Auth.SignInFailed += () =>
         {
-            Debug.Log("SignIn failed:");
-        };
-
+            Debug.Log("[YOURE] SignIn failed");
+        }; 
+    
         Youre.Auth.SignInSucceeded += user =>
         {
-            Debug.Log("Received YOURE.ID from callback: "+user.Id);
-            Debug.Log("Received YOURE AccessToken from callback: "+user.AccessToken);
-            Debug.Log("Received YOURE User Name from callback: "+user.UserName);
-            Debug.Log("Received YOURE User Email from callback: "+user.Email);
+            Debug.Log("[YOURE] Received YOURE User Token from callback: " + user.AccessToken);
+            Debug.Log("[YOURE] Received YOURE User Id from callback: " + user.Id);
+            Debug.Log("[YOURE] Received YOURE User Email from callback: "+user.Email);
+            Debug.Log("[YOURE] Received YOURE User Username from callback: "+user.UserName);
         };
         
-        Youre.Auth.SignIn();
+        if (Youre.Auth.WasSignedIn())
+        {
+            RenewSignIn();
+        }
+        else
+        {
+            NewSignIn();
+        }
+    
     }
     
-    private async void AutoSignIn()
+    private async void RenewSignIn()
     {
-      if(Youre.Auth.WasSignedIn())
-      {
-         YoureUser user = await Youre.Auth.GetActiveUser();
-         if(user == null)
-         {
-            await Youre.Auth.SignIn();
-         }
-      }
+        await Youre.Auth.SignIn();
     }
-
     
+    private async void NewSignIn()
+    {
+        await Youre.Auth.SignIn();
+    }
 }
 ```
 
@@ -106,6 +110,7 @@ bool wasSignedIn = Youre.Auth.WasSignedIn();
 ### Youre.Auth.GetActiveUser()
 ```c#
 // Will return the YoureUser if user was signed-in and session is still valid
+// Will NOT refresh expired token on call!
 YoureUser user = await Youre.Auth.GetActiveUser();
 ```
 

@@ -69,3 +69,8 @@ All notable changes to this project will be documented in this file.
 ## [2.1.2] - 2025-01-23
 
 - Fixed string empty handling
+
+## [2.1.3] - 2025-01-29
+
+- Better compatibility for unity 6 and below
+- Added token refresh handling

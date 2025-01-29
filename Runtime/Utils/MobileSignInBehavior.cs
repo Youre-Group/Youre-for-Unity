@@ -39,8 +39,6 @@ public class MobileSignInBehavior : MonoBehaviour {
         _authOperationInProgress = true;
         _watchForReply = false;
             
-        Youre.LogDebug("Signing in...");
-
         AuthClientResult result = null;
         
         try

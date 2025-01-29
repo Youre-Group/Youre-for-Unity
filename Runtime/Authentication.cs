@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Auth;
 using Data;
+using IdentityModel.OidcClient.Results;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -64,11 +65,12 @@ namespace YourePlugin
             UnityWebRequest request = UnityWebRequest.Get($"{_authority}/protocol/openid-connect/userinfo");
             request.SetRequestHeader("Authorization", "Bearer " + savedAccessToken);
             await SendRequestAsync(request);
-
+    
             if (request.result == UnityWebRequest.Result.Success)
             {
                 if (request.downloadHandler.text.Contains(savedId))
                 {
+                    Youre.LogDebug("Old session valid");
                     YoureUser user = new()
                     {
                         Id = savedId,
@@ -81,6 +83,7 @@ namespace YourePlugin
             }
             else
             {
+                
                 Youre.LogDebug("Old session not valid: " + request.error);
             }
 
@@ -127,8 +130,48 @@ namespace YourePlugin
 
             
             _authClient = new AuthClient(_clientId, _authority, _deeplinkScheme);
+
+            // Try to renew token if available
+            if (WasSignedIn())
+            {
+                YoureUser user = await GetActiveUser();
+                if (user == null)
+                {
+                    Youre.LogDebug("Refreshing token...");
+                    String lastRefreshToken = PlayerPrefs.GetString("YREID_lastRefreshToken");
+                    if (!string.IsNullOrEmpty(lastRefreshToken))
+                    {
+                        RefreshTokenResult refreshTokenResult = await _authClient.Refresh(lastRefreshToken);
+                        if (!refreshTokenResult.IsError)
+                        {
+                            PlayerPrefs.SetString("YREID_lastAccessToken", refreshTokenResult.AccessToken);
+                            PlayerPrefs.SetString("YREID_lastRefreshToken", refreshTokenResult.RefreshToken);
+                            user = new()
+                            {
+                                Id = PlayerPrefs.GetString("YREID_lastID"),
+                                Email = PlayerPrefs.GetString("YREID_lastEmail"),
+                                UserName = PlayerPrefs.GetString("YREID_lastUserName"),
+                                AccessToken = refreshTokenResult.AccessToken,
+                            };
+                            Youre.LogDebug("Token refreshed");
+                            SignInSucceeded?.Invoke(user);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Youre.LogDebug("Refresh Token was not stored yet. Will be stored with next login");
+                    }
+                }
+                else
+                {
+                    SignInSucceeded?.Invoke(user);
+                    return;
+                }
+
+            }
+         
             Youre.LogDebug("Signing in...");
-            
             AuthClientResult result = null;
 
             _signInInProgress = true;
@@ -169,6 +212,7 @@ namespace YourePlugin
                     AccessToken = result.AccessToken,
                 };
                 
+                PlayerPrefs.SetString("YREID_lastRefreshToken", result.RefreshToken);
                 PlayerPrefs.SetString("YREID_lastAccessToken", user.AccessToken);
                 PlayerPrefs.SetString("YREID_lastID", user.Id);
                 PlayerPrefs.SetString("YREID_lastEmail", user.Email);

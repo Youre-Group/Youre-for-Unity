@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Browser;
-using IdentityModel.OidcClient.Infrastructure;
+using IdentityModel.OidcClient.Results;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
@@ -28,7 +28,6 @@ namespace Auth
         public AuthClient(string clientId, string authority, string redirectUrl)
         {
 
-            //
             if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor)
             {
                 Youre.LogDebug("Sorry, SSO within Editor is not supported yet.");
@@ -63,7 +62,7 @@ namespace Auth
                 Authority = authority,
                 TokenClientCredentialStyle = ClientCredentialStyle.AuthorizationHeader,
                 ClientId = clientId,
-                Scope = "openid email profile",
+                Scope = "openid email profile offline_access",
                 RedirectUri = redirectUrl,
                 PostLogoutRedirectUri = redirectUrl,
                 LoadProfile = false,
@@ -71,9 +70,28 @@ namespace Auth
                 LoggerFactory = new LoggerFactory()
             };
             _client = new OidcClient(options);
+         
         }
 
-
+        public async Task<RefreshTokenResult> Refresh(string refreshToken)
+        {
+            try
+            {
+                if (_client == null)
+                {
+                    Youre.LogDebug("no client inited");
+                    return null;
+                }
+                RefreshTokenResult result = await _client.RefreshTokenAsync(refreshToken);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Youre.LogDebug("Exception during token refresh: " + e.Message);
+            }
+            return null;
+        }
+        
         [ItemCanBeNull]
         public async Task<AuthClientResult> LoginAsync()
         {
@@ -109,6 +127,7 @@ namespace Auth
                   UserName = _result.User.Claims.First((c) => c.Type == "preferred_username").Value,
                   UserId = _result.User.Claims.First((c) => c.Type == "sub").Value,
                   AccessToken = _result.AccessToken,
+                  RefreshToken = _result.RefreshToken
                 };
                 return result;
             }
@@ -144,5 +163,7 @@ namespace Auth
         }
 
         public Browser Browser { get; }
+
+     
     }
 }
